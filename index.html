@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Mapa Solidário JP — Ajudar sempre é o melhor caminho</title>
+  <meta name="description" content="Hub de conexão social que organiza, amplifica e conecta o trabalho de ONGs e projetos sociais em João Pessoa, Paraíba."/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap">
+
+  <link rel="stylesheet" href="site.css"/>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="data.jsx"></script>
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="pages.jsx"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "accent": "#795a9f",
+      "heroBg": "warm",
+      "scriptTagline": true,
+      "showStars": true
+    }/*EDITMODE-END*/;
+
+    // ---- Hash router ---------------------------------------------------
+    function parseHash() {
+      // Format: #page?key=value&key2=value2
+      const raw = (location.hash || '#home').slice(1);
+      const [page, qs] = raw.split('?');
+      const params = {};
+      if (qs) {
+        qs.split('&').forEach((kv) => {
+          const [k, v] = kv.split('=');
+          if (k) params[decodeURIComponent(k)] = decodeURIComponent(v || '');
+        });
+      }
+      return { page: page || 'home', params };
+    }
+
+    function buildHash(page, params) {
+      const qs = params && Object.keys(params).length
+        ? '?' + Object.entries(params).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&')
+        : '';
+      return `#${page}${qs}`;
+    }
+
+    function App() {
+      const [route, setRoute] = useState(parseHash());
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+      useEffect(() => {
+        const onHash = () => {
+          setRoute(parseHash());
+          // Always scroll to top on navigation
+          window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+        };
+        window.addEventListener('hashchange', onHash);
+        return () => window.removeEventListener('hashchange', onHash);
+      }, []);
+
+      const navigate = (page, params) => {
+        const next = buildHash(page, params);
+        if (next === location.hash) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          location.hash = next;
+        }
+      };
+
+      // Apply accent tweak globally
+      useEffect(() => {
+        document.documentElement.style.setProperty('--ms-red', t.accent);
+      }, [t.accent]);
+
+      // Page switch
+      let page;
+      switch (route.page) {
+        case 'sobre':     page = <SobrePage navigate={navigate}/>; break;
+        case 'ongs':      page = <OngsPage navigate={navigate} params={route.params}/>; break;
+        case 'ong':       page = <OngPage navigate={navigate} params={route.params}/>; break;
+        case 'cadastrar': page = <CadastrarPage navigate={navigate}/>; break;
+        case 'contato':   page = <ContatoPage navigate={navigate}/>; break;
+        case 'home':
+        default:          page = <HomePage navigate={navigate} tweaks={t}/>; break;
+      }
+
+      // We re-key on (page + params.id|causa) so internal page state resets when navigating to a new entity
+      const pageKey = route.page + ':' + (route.params?.id || route.params?.causa || '');
+
+      return (
+        <React.Fragment>
+          <TopNav page={route.page} navigate={navigate}/>
+          <div key={pageKey}>{page}</div>
+          <Footer navigate={navigate}/>
+
+          <TweaksPanel>
+            <TweakSection label="Marca"/>
+            <TweakColor label="Cor de destaque" value={t.accent}
+              options={['#db4347', '#795a9f', '#01a157', '#12467a', '#f4bb31']}
+              onChange={(v) => setTweak('accent', v)}/>
+            <TweakSection label="Decoração"/>
+            <TweakToggle label="Estrelas no manifesto" value={t.showStars}
+              onChange={(v) => setTweak('showStars', v)}/>
+            <TweakToggle label="Tagline em script (Borel)" value={t.scriptTagline}
+              onChange={(v) => setTweak('scriptTagline', v)}/>
+
+            <TweakSection label="Atalhos"/>
+            <TweakButton label="↗ Home" onClick={() => navigate('home')}/>
+            <TweakButton label="↗ Sobre" onClick={() => navigate('sobre')}/>
+            <TweakButton label="↗ Catálogo" onClick={() => navigate('ongs')}/>
+            <TweakButton label="↗ ONG (exemplo)" onClick={() => navigate('ong', { id: 'pata-amiga' })}/>
+            <TweakButton label="↗ Cadastrar" onClick={() => navigate('cadastrar')}/>
+            <TweakButton label="↗ Contato" onClick={() => navigate('contato')}/>
+          </TweaksPanel>
+        </React.Fragment>
+      );
+    }
+
+    // Apply Tweaks side-effects via CSS overrides where possible
+    const styleTag = document.createElement('style');
+    styleTag.id = 'tweak-runtime';
+    document.head.appendChild(styleTag);
+
+    function applyTweakSideEffects(t) {
+      let css = '';
+      if (!t.showStars) css += '.stars{display:none!important;}';
+      if (!t.scriptTagline) css += '.script-tagline{display:none!important;}';
+      styleTag.textContent = css;
+    }
+
+    // Patch useTweaks side-effects: easiest is to wrap App in a small observer
+    function Root() {
+      // Pull the same tweaks state via a small bridge
+      return <App/>;
+    }
+
+    // Apply side-effects whenever app re-renders via a MutationObserver-free shortcut:
+    // we patch setTweak by listening to localStorage updates from tweaks-panel.jsx -- but it doesn't write there,
+    // so just expose a global hook that App calls in an effect.
+    // Simpler: re-render observer using a Proxy on TWEAK_DEFAULTS isn't needed — we apply directly in App via effect.
+
+    // Actually apply via effect inside a wrapper
+    function Wrapper() {
+      const [t] = useTweaks(TWEAK_DEFAULTS);
+      useEffect(() => { applyTweakSideEffects(t); }, [t]);
+      return <App/>;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Wrapper/>);
+  </script>
+</body>
+</html>
