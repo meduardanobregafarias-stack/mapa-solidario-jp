@@ -1,0 +1,10 @@
+# Netlify headers — controla cache.
+# A página principal (HTML) nunca fica em cache: o navegador sempre
+# busca a versão mais nova. Os arquivos JS/CSS usam ?v=N pra controlar
+# versão, então podem ser cacheados normalmente.
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
