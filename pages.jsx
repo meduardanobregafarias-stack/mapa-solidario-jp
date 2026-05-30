@@ -456,10 +456,10 @@ function OngPage({ navigate, params }) {
                   <Icon.arrow width="16" height="16"/>
                 </a>
                 {ong.phone && (
-                  <a href={`tel:${ong.phone.replace(/\D/g, '')}`} className="help-row" style={{ textDecoration: 'none' }}>
+                  <a href={`https://wa.me/55${ong.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="help-row" style={{ textDecoration: 'none' }}>
                     <span className="ic" style={{ background: '#25D366', color: '#fff' }}><Icon.whats/></span>
                     <div style={{ flex: 1 }}>
-                      <strong>WhatsApp / Telefone</strong>
+                      <strong>WhatsApp</strong>
                       {ong.phone}
                     </div>
                     <Icon.arrow width="16" height="16"/>

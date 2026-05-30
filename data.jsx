@@ -62,7 +62,6 @@ const ONGS = [
     name: 'Abrigo Amém',
     causa: 'idosos',
     handle: 'abrigoamem',
-    phone: '(83) 3245-2761',
     short: 'Casa de acolhimento que oferece moradia e dignidade para pessoas idosas em vulnerabilidade.',
   },
 
@@ -124,7 +123,6 @@ const ONGS = [
     name: 'CENAP — Centro Nacional de Aprendizagem Profissional',
     causa: 'educacao',
     handle: 'cenap.jp',
-    phone: '(83) 99657-0397',
     short: 'Oferece cursos profissionalizantes para jovens em situação de vulnerabilidade.',
   },
 

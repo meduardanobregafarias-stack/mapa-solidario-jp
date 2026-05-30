@@ -7,10 +7,10 @@ const { useState, useEffect, useRef } = React;
 const CAUSES = [
   { id: 'cultura',       label: 'Cultura',        color: '#db4347', illus: null },
   { id: 'idosos',        label: 'Idosos',         color: '#12467a', illus: null },
-  { id: 'animais',       label: 'Animais',        color: '#96c226', illus: 'assets/destaque-animais.png' },
+  { id: 'animais',       label: 'Animais',        color: '#96c226', illus: null },
   { id: 'saude',         label: 'Saúde',          color: '#01a157', illus: null },
-  { id: 'educacao',      label: 'Educação',       color: '#795a9f', illus: 'assets/destaque-educacao.png' },
-  { id: 'criancas',      label: 'Crianças',       color: '#f4bb31', illus: 'assets/destaque-criancas.png' },
+  { id: 'educacao',      label: 'Educação',       color: '#795a9f', illus: null },
+  { id: 'criancas',      label: 'Crianças',       color: '#f4bb31', illus: null },
   { id: 'meio-ambiente', label: 'Meio Ambiente',  color: '#2b6a4a', illus: null },
 ];
 
