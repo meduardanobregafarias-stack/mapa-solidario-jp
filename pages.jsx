@@ -510,27 +510,24 @@ function OngPage({ navigate, params }) {
 // ====================================================================
 // CADASTRAR ONG
 // ====================================================================
-// Submissions are POSTed to Formsubmit.co (no signup required). One-time
-// activation: on first ever submission, Formsubmit emails a confirmation
-// link to the inbox — owner clicks it once, then all future submissions
-// arrive automatically as formatted tables.
-const FORMSUBMIT_INBOX = 'mapasolidariojp@gmail.com';
+// Submissions are POSTed to Web3Forms — they arrive in mapasolidariojp@gmail.com
+// formatted as a table. No activation step; works as soon as it's live.
+const WEB3FORMS_KEY = 'd4a501e8-7da5-4045-bc1d-c7e3dda198fd';
 
 async function submitToEmail(payload, subject) {
   try {
-    const res = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(FORMSUBMIT_INBOX), {
+    const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
-        _subject: subject,
-        _template: 'table',
-        _captcha: 'false',
+        access_key: WEB3FORMS_KEY,
+        subject: subject,
+        from_name: 'Site Mapa Solidário JP',
         ...payload,
       }),
     });
     const data = await res.json().catch(() => ({}));
-    // Formsubmit returns success:"true" (string) on success
-    return data.success === 'true' || data.success === true;
+    return data.success === true || data.success === 'true';
   } catch (e) {
     return false;
   }
