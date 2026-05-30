@@ -98,6 +98,7 @@ function TopNav({ page, navigate }) {
   const go = (id) => { setSheet(false); navigate(id); };
 
   return (
+    <React.Fragment>
     <header className="nav">
       <div className="nav-inner">
         <a className="nav-logo" href="#home" onClick={(e) => { e.preventDefault(); go('home'); }}>
@@ -119,6 +120,7 @@ function TopNav({ page, navigate }) {
           <Icon.burger/>
         </button>
       </div>
+    </header>
 
       <div className={'nav-sheet ' + (sheet ? 'is-open' : '')}>
         <div className="nav-sheet-head">
@@ -146,7 +148,7 @@ function TopNav({ page, navigate }) {
           </button>
         </div>
       </div>
-    </header>
+    </React.Fragment>
   );
 }
 
